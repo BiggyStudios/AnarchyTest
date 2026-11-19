@@ -36,6 +36,9 @@ namespace AnarchyTest
             _brightness = _light?.Intensity ?? 1f;
         }
 
+        /// <summary>Makes it stutter for a moment, as if something got into it.</summary>
+        public void Sputter(float seconds) => _sputter = MathF.Max(_sputter, seconds);
+
         protected override void Update()
         {
             if (_light == null || Head == null) return;
