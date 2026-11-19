@@ -12,6 +12,8 @@ namespace AnarchyTest
     /// <see cref="Spots"/>, somewhere Rivali isn't looking, facing Rivali, and stays there until it's seen. Once seen,
     /// looking away lets it go; staring at it, or coming too close, makes it go in a blackout. While it's in view the
     /// picture tears and drains (the PSX effect's Fear), and seeing it hits with a sting.
+    /// Very rarely it hunts instead: it doesn't go when looked away from but comes closer, a step at a time, whenever
+    /// it isn't being watched, and the lights keep failing. If it reaches Rivali, the <see cref="Visions"/> begin.
     /// </summary>
     public class WhiteFigure : Component
     {
@@ -52,6 +54,27 @@ namespace AnarchyTest
         /// <summary>How close Rivali can come before it goes, in metres.</summary>
         public float TooClose { get; set; } = 4.5f;
 
+        /// <summary>The chance, each time it comes by itself, that it hunts, once it's been seen <see cref="HuntAfter"/> times.</summary>
+        [Header("Hunting")]
+        [Range(0f, 1f)]
+        public float HuntChance { get; set; } = 0.15f;
+        public int HuntAfter { get; set; } = 3;
+
+        /// <summary>How long a hunt lasts before it gives up, in seconds.</summary>
+        public float HuntTime { get; set; } = 40f;
+
+        /// <summary>How close it has to get to catch Rivali, in metres.</summary>
+        public float CatchDistance { get; set; } = 1.4f;
+
+        /// <summary>Played where it lands each time it comes closer.</summary>
+        public AudioClip? Step { get; set; }
+
+        /// <summary>What happens when it catches Rivali.</summary>
+        public Visions? Visions { get; set; }
+
+        /// <summary>Whether it's hunting now.</summary>
+        public bool Hunting { get; private set; }
+
         /// <summary>Whether it's standing somewhere now.</summary>
         public bool Watching { get; private set; }
 
@@ -70,6 +93,7 @@ namespace AnarchyTest
         private Flashlight? _torch;
         private GameObject? _spot;
         private float _wait, _watched, _inSight, _outOfSight, _blackout;
+        private float _huntLeft, _blinkIn, _stepIn;
 
         protected override void Start()
         {
@@ -116,12 +140,13 @@ namespace AnarchyTest
             }
             else if (Roaming)
             {
-                _wait -= delta;
+                // Not while Rivali's held still (reading, or in the visions).
+                if (_player?.CanMove ?? false) _wait -= delta;
                 if (_wait <= 0f)
                 {
                     GameObject? spot = ChooseSpot();
-                    if (spot != null) Appear(spot);
-                    else _wait = 3f;
+                    if (spot == null) _wait = 3f;
+                    else if (Appear(spot) && Sightings >= HuntAfter && Random.Shared.NextSingle() < HuntChance) StartHunt();
                 }
             }
 
@@ -130,6 +155,12 @@ namespace AnarchyTest
 
         private void Watch(bool inSight, float delta)
         {
+            if (Hunting)
+            {
+                Hunt(inSight, delta);
+                return;
+            }
+
             _watched += delta;
             if (inSight)
             {
@@ -174,7 +205,119 @@ namespace AnarchyTest
 
             Hide();
             Watching = false;
+            Hunting = false;
             _wait = NextWait();
+        }
+
+        /// <summary>Makes it hunt from where it's standing. It has to be somewhere already (see <see cref="Appear"/>).</summary>
+        public bool StartHunt()
+        {
+            if (!Watching) return false;
+            Hunting = true;
+            _huntLeft = HuntTime;
+            _blinkIn = 2f + Random.Shared.NextSingle() * 2f;
+            _stepIn = 1f;
+            return true;
+        }
+
+        private void Hunt(bool inSight, float delta)
+        {
+            _watched += delta;
+            _huntLeft -= delta;
+
+            // The lights give out every few seconds, and in the dark it isn't being watched.
+            _blinkIn -= delta;
+            if (_blinkIn <= 0f)
+            {
+                _blackout = 0.22f;
+                _torch?.Sputter(0.6f);
+                _blinkIn = 3f + Random.Shared.NextSingle() * 3.5f;
+            }
+
+            if (inSight && _blackout <= 0f)
+            {
+                _inSight += delta;
+                if (!Seen && _inSight >= NoticeTime)
+                {
+                    Seen = true;
+                    Sightings++;
+                    Fear = 1f;
+                    if (Sting != null) Sound.Play(Sting, 0.9f);
+                }
+            }
+            else
+            {
+                FacePlayer();
+                _stepIn -= delta;
+                if (_stepIn <= 0f)
+                {
+                    StepCloser();
+                    _stepIn = 0.7f + Random.Shared.NextSingle() * 0.9f;
+                }
+            }
+
+            if (HorizontalDistance() < CatchDistance) Catch();
+            else if (_huntLeft <= 0f) Vanish(blackout: true);
+        }
+
+        /// <summary>
+        /// A couple of metres nearer: straight at Rivali if nothing's in the way, otherwise to somewhere out of sight
+        /// round Rivali, about as far as it can get.
+        /// </summary>
+        private void StepCloser()
+        {
+            if (_player == null) return;
+            Vector3 me = Transform.WorldPosition;
+            Vector3 them = _player.Transform.WorldPosition;
+            Vector3 to = them - me;
+            to.Y = 0f;
+            float distance = to.Length();
+            if (distance < 0.01f) return;
+            Vector3 direction = to / distance;
+            float stride = MathF.Min(2.4f, distance - CatchDistance * 0.5f);
+
+            float clear = stride;
+            if (GameObject.Scene.Physics.Raycast(me + new Vector3(0f, 1f, 0f), direction, stride + 0.4f, out RaycastHit hit, _playerBody)) clear = hit.Distance - 0.4f;
+
+            Vector3? next = null;
+            if (clear >= 0.5f)
+            {
+                next = me + direction * MathF.Min(stride, clear);
+            }
+            else
+            {
+                // Round the corner: somewhere nearer, in the open, that Rivali isn't facing.
+                float reach = MathF.Max(CatchDistance * 0.8f, distance - 2.4f);
+                Vector3 forward = _player.Head?.Transform.Forward ?? -Vector3.UnitZ;
+                var flat = Vector3.Normalize(new Vector3(forward.X, 0f, forward.Z) + new Vector3(0f, 0f, 1e-4f));
+                int start = Random.Shared.Next(12);
+                for (int i = 0; i < 12 && next == null; i++)
+                {
+                    float angle = (start + i) * MathF.Tau / 12f;
+                    var offset = new Vector3(MathF.Cos(angle), 0f, MathF.Sin(angle)) * reach;
+                    if (Vector3.Dot(Vector3.Normalize(offset), flat) > 0.4f) continue;
+                    Vector3 eye = them + new Vector3(0f, 1f, 0f);
+                    if (GameObject.Scene.Physics.Raycast(eye, offset, reach + 0.3f, out _, _playerBody)) continue;
+                    if (!GameObject.Scene.Physics.Raycast(eye + offset, -Vector3.UnitY, 1.3f, out RaycastHit floor, _playerBody)) continue;
+                    next = new Vector3(them.X + offset.X, floor.Point.Y, them.Z + offset.Z);
+                }
+            }
+
+            if (next is not { } landed) return;
+            Transform.Position = landed;
+            FacePlayer();
+            if (Step != null) Sound.PlayAt(Step, landed, 1f);
+        }
+
+        /// <summary>It's reached Rivali.</summary>
+        private void Catch()
+        {
+            Hide();
+            Watching = false;
+            Hunting = false;
+            Fear = 1f;
+            _wait = NextWait() + 30f;
+            Visions?.Begin();
         }
 
         private void Hide()
@@ -188,6 +331,8 @@ namespace AnarchyTest
         private void Frighten(bool inSight, float delta)
         {
             float target = !inSight ? 0f : Seen ? 0.35f + 0.65f * MathF.Min(1f, _inSight / StareLimit) : 0.18f;
+            // A hunt is felt even when it can't be seen.
+            if (Hunting) target = MathF.Max(target, inSight ? 0.8f : 0.45f);
             Fear = target > Fear ? MathF.Min(target, Fear + delta * 3f) : MathF.Max(target, Fear - delta * 0.45f);
             _blackout = MathF.Max(0f, _blackout - delta);
 
@@ -200,7 +345,8 @@ namespace AnarchyTest
         private bool InSight()
         {
             GameObject? head = _player?.Head;
-            if (head == null || Body == null) return false;
+            // Held still (reading, say), Rivali isn't watching anything.
+            if (head == null || Body == null || !_player!.CanMove) return false;
 
             Vector3 eye = head.Transform.WorldPosition;
             Vector3 forward = head.Transform.Forward;
@@ -246,6 +392,8 @@ namespace AnarchyTest
                 float distance = to.Length();
                 if (distance < NearestSpot || distance > FurthestSpot) continue;
                 if (Vector3.Dot(to / distance, forward) > MathF.Cos(55f * MathF.PI / 180f)) continue;
+                // Somewhere Rivali would see it by turning round, not behind a wall.
+                if (!ClearLine(eye, to / distance, distance)) continue;
                 choices.Add(spot);
             }
 
