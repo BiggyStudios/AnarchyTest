@@ -40,6 +40,98 @@ namespace AnarchyTest.Tests
         }
 
         [Fact]
+        public void Keycards_open_the_doors_that_want_them()
+        {
+            StartWard();
+            var hands = Player.GetComponent<Interactor>()!;
+            var inventory = Player.GetComponent<Inventory>()!;
+
+            // Without the card, C-301 says what it wants.
+            Place(-10.5f, -7.9f, 0f);
+            Tap(Key.E);
+            Assert.False(Door("C-301").Open);
+            Assert.Contains("staff card", inventory.Shown);
+
+            // The staff card is on the monitoring room's desk; taken, it's gone from there.
+            Pickup card = Scene.Active.FindComponents<Pickup>().Single(p => p.Card == "staff");
+            card.Use(hands);
+            Assert.True(inventory.Has("staff"));
+            Assert.False(card.GameObject.Active);
+            Assert.Equal("Took the staff keycard.", inventory.Shown);
+
+            // Now the door shows "Open" and opens.
+            RunFrames(2);
+            Assert.Same(Door("C-301"), hands.Target);
+            Assert.Equal("Open", hands.Target!.Prompt);
+            Tap(Key.E);
+            Assert.True(Door("C-301").Open);
+
+            // Each card is somewhere to be found, and each door that wants one has it somewhere.
+            var cards = Scene.Active.FindComponents<Pickup>().Select(p => p.Card).Append("staff").ToHashSet();
+            foreach (SlidingDoor door in Scene.Active.FindComponents<SlidingDoor>().Where(d => d.Card.Length > 0 && d.Card != "medical"))
+                Assert.Contains(door.Card, cards);
+        }
+
+        [Fact]
+        public void The_override_raises_the_blast_door_onto_the_lift_lobby()
+        {
+            StartWard();
+            var hands = Player.GetComponent<Interactor>()!;
+            SlidingDoor blast = GameObject.Find("Blast Door")!.GetComponent<SlidingDoor>()!;
+
+            // By hand it won't move.
+            Place(12.6f, -7.7f, -MathF.PI / 2f);
+            Assert.Same(blast, hands.Target);
+            Tap(Key.E);
+            Assert.False(blast.Open);
+
+            Scene.Active.FindComponent<Switch>()!.Use(hands);
+            Assert.True(blast.Open);
+            RunFrames(200);
+
+            Hold(Key.W, 120);
+            Vector3 at = Player.Transform.Position;
+            Assert.True(at.X > 15f, $"Didn't get through the blast door: at {at}");
+            Assert.Equal("", Warnings());
+        }
+
+        [Fact]
+        public void Caught_by_the_hunting_figure_Rivali_sees_the_visions_and_wakes_in_the_ward_further_gone()
+        {
+            StartWard();
+            var figure = GameObject.Find("White Figure")!.GetComponent<WhiteFigure>()!;
+            var player = Player.GetComponent<Player>()!;
+            Camera eyes = player.Head!.GetComponent<Camera>()!;
+            var readout = Scene.Active.FindComponent<TransferReadout>()!;
+            Assert.Equal(97, readout.Transfer);
+
+            // In the corridor facing the doors; it comes from the west end, closer whenever it isn't watched.
+            Place(0f, -7.4f, 0f);
+            Assert.True(figure.Watching);
+            Assert.True(figure.StartHunt());
+            Visions visions = figure.Visions!;
+            int frames = 0;
+            while (!visions.Showing && frames < 60 * 45)
+            {
+                RunFrames(1);
+                frames++;
+            }
+
+            Assert.True(visions.Showing, "It never caught Rivali");
+            Assert.False(figure.Hunting);
+            Assert.False(player.CanMove);
+            Assert.NotSame(eyes, Camera.Main);
+
+            RunFrames((int)(visions.Length * 60f) + 5);
+            Assert.False(visions.Showing);
+            Assert.Same(eyes, Camera.Main);
+            Assert.True(player.CanMove);
+            Assert.True(Vector3.Distance(Player.Transform.Position, new Vector3(-2.2f, 0f, 3.6f)) < 0.3f, $"Woke at {Player.Transform.Position}");
+            Assert.Equal(98, readout.Transfer);
+            Assert.Equal("", Warnings());
+        }
+
+        [Fact]
         public void Reading_a_screen_holds_Rivali_still_until_it_is_put_away()
         {
             StartWard();
@@ -73,10 +165,13 @@ namespace AnarchyTest.Tests
             var clips = new List<Vertex.Audio.AudioClip?>();
             foreach (SlidingDoor door in Scene.Active.FindComponents<SlidingDoor>()) clips.AddRange([door.OpenSound, door.LockedSound]);
             foreach (Terminal screen in Scene.Active.FindComponents<Terminal>()) clips.Add(screen.Sound);
-            clips.Add(GameObject.Find("White Figure")!.GetComponent<WhiteFigure>()!.Sting);
+            foreach (Pickup card in Scene.Active.FindComponents<Pickup>()) clips.Add(card.Sound);
+            foreach (Switch lever in Scene.Active.FindComponents<Switch>()) clips.Add(lever.Sound);
+            var figure = GameObject.Find("White Figure")!.GetComponent<WhiteFigure>()!;
+            clips.AddRange([figure.Sting, figure.Step, figure.Visions!.Sting, figure.Visions.Noise]);
             clips.Add(GameObject.Find("Ambience")!.GetComponent<Vertex.Audio.AudioSource>()!.Sound);
 
-            Assert.Equal(14, clips.Count);
+            Assert.True(clips.Count > 30, $"Only {clips.Count} sounds");
             foreach (Vertex.Audio.AudioClip? clip in clips)
             {
                 Assert.NotNull(clip);
