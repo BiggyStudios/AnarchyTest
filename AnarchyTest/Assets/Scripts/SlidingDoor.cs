@@ -25,6 +25,15 @@ namespace AnarchyTest
 
         public bool Locked { get; set; }
 
+        /// <summary>The keycard that opens it while it's locked, if Rivali has picked it up (see <see cref="Pickup"/>).</summary>
+        public string Card { get; set; } = "";
+
+        /// <summary>Shown at the bottom of the screen when it won't open ("Locked. The reader wants a staff card.").</summary>
+        public string LockedMessage { get; set; } = "";
+
+        /// <summary>Whether it can be used by hand. One that can't opens only from something else (a <see cref="Switch"/>).</summary>
+        public bool ByHand { get; set; } = true;
+
         /// <summary>The little light by the door: red while it's locked, blue once it isn't. It needs a material of its own.</summary>
         public MeshRenderer? LockLight { get; set; }
 
@@ -34,8 +43,10 @@ namespace AnarchyTest
 
         public bool Open { get; private set; }
 
-        public override string Prompt => Locked ? "Locked" : "Open";
-        public override bool Available => !Open;
+        public override string Prompt => Locked && !HasCard ? "Locked" : "Open";
+        public override bool Available => !Open && ByHand;
+
+        private bool HasCard => GameObject.Scene.FindComponent<Inventory>()?.Has(Card) ?? false;
 
         private static readonly Color LockedColour = new(1f, 0.12f, 0.08f);
         private static readonly Color OpenColour = new(0.3f, 0.85f, 1f);
@@ -51,13 +62,22 @@ namespace AnarchyTest
 
         public override void Use(Interactor by)
         {
-            if (Locked)
+            if (Locked && !HasCard)
             {
                 _blink = 0.5f;
                 if (LockedSound != null) Sound.PlayAt(LockedSound, FocusPoint, 0.7f);
+                by.GetComponent<Inventory>()?.Notice(LockedMessage.Length > 0 ? LockedMessage : "Locked.");
                 return;
             }
 
+            OpenNow();
+        }
+
+        /// <summary>Unlocks it and opens it, whoever's asking.</summary>
+        public void OpenNow()
+        {
+            if (Open) return;
+            Locked = false;
             Open = true;
             if (OpenSound != null) Sound.PlayAt(OpenSound, FocusPoint, 0.9f);
         }
