@@ -3,7 +3,7 @@
 A first-person story horror game made with the [Vertex engine](https://github.com/BiggyStudios/Vertex), in the
 style of the first PlayStation: low resolution, wobbling polygons, bending textures, crisp 64-pixel textures and
 dithered 15-bit colour, fading into darkness. Everything is white, clean and high-tech, or was.
-Early days: so far there's the neural ward Rivali wakes in and the corridor outside it, in greybox.
+Early days: so far there's the neural ward Rivali wakes in, the corridor outside it, and a monitoring room, in greybox.
 
 **Content warning:** graphic violence, gore and disturbing themes. For adults only.
 
@@ -29,7 +29,8 @@ dotnet run --project AnarchyTest
 ```
 
 Click in the window to take the mouse (Escape gives it back). WASD to walk, Shift to hurry, Ctrl or C to crouch, F for
-the flashlight.
+the flashlight, and E to use what you're looking at: doors, screens, tablets. While reading, A and D turn the pages and
+E or Escape puts it away.
 
 To work on it in the editor, open `AnarchyTest/AnarchyTest.vertexproject` (File › Open Project). The look comes from two
 places: the scene's **Retro** settings in Lighting & Sky (vertex snapping, bending textures, crisp texels) and the PSX
@@ -38,16 +39,17 @@ editor's scene view shows the post effect too; the button beside the grid's in i
 
 ## Tests
 
-`dotnet test AnarchyTest.slnx` builds the engine and the game and plays the ward without a window, along with the
-engine's own tests.
+`dotnet test AnarchyTest.slnx` builds the engine and the game and plays it without a window (walking out of the ward,
+doors, reading and the white figure), along with the engine's own tests.
 
 ## Layout
 
 | Folder | What's in it |
 | --- | --- |
 | `AnarchyTest/Assets/Scenes` | The scenes, made and changed in the editor. |
-| `AnarchyTest/Assets/Scripts` | The game's C# components: the player, the flashlight, flickering lights. |
+| `AnarchyTest/Assets/Scripts` | The game's C# components: the player, the flashlight, doors, screens, flickering lights, the white figure. |
 | `AnarchyTest/Assets/Shaders` | GLSL shaders: the PSX post effect. |
+| `AnarchyTest/Assets/Text` | What's written on the screens and tablets, a file each. It isn't published, so in a fresh clone they read as corrupted. |
 | `AnarchyTest/Assets/Textures` | Textures, 64 pixels across. |
 | `AnarchyTest.Tests` | Tests that play the game headless. |
 
