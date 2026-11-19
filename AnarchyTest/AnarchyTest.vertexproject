@@ -1,0 +1,8 @@
+{
+  "Name": "AnarchyTest",
+  "Version": "0.1",
+  "StartupScene": "Scenes/Ward.scene",
+  "GameProject": "AnarchyTest.csproj",
+  "PhysicsRate": 60,
+  "ShadowResolution": 2048
+}

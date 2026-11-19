@@ -1,0 +1,9 @@
+<Solution>
+  <!-- The engine around this folder, so one solution builds and tests both. -->
+  <Folder Name="/Engine/">
+    <Project Path="../Vertex.Tests/Vertex.Tests.csproj" />
+    <Project Path="../Vertex/Vertex.csproj" />
+  </Folder>
+  <Project Path="AnarchyTest.Tests/AnarchyTest.Tests.csproj" />
+  <Project Path="AnarchyTest/AnarchyTest.csproj" />
+</Solution>

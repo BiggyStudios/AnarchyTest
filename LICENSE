@@ -1,0 +1,96 @@
+AnarchyTest License
+
+Copyright (c) 2026 BiggyStudios. All rights reserved.
+https://github.com/BiggyStudios/AnarchyTest
+
+This license covers everything in this repository: the game's code, scenes, shaders,
+textures, models, sounds, interface, story, characters (including Rivali and Emilia),
+setting, writing and design (together, "the Game"). The Vertex engine the Game is built
+with is not covered by this license; it is under its own license in the Vertex
+repository.
+
+Files in this repository that come with their own license are under that license
+instead (for example models or sounds from outside the Game, whose licenses are kept
+next to them).
+
+In short:
+  - Read the code, build the Game and play it yourself: yes.
+  - Sell it, make money from it, or use it in anything commercial: no.
+  - Share, reupload or release it, changed or not, even for free: no.
+  - Use its code, art, story or characters in anything else: no, not without written
+    permission.
+The numbered terms below are what actually apply; this summary is only a guide.
+
+
+1. Definitions
+
+"Commercial use" means using something to make money, or as part of anything that
+makes money, in any way: selling it, charging to download, play or access it, putting
+it behind a paywall or subscription, adding purchases or advertising, offering it on a
+paid store listing, using it in paid work or for a business, or streaming or recording
+it in a way that earns money from it beyond what section 2.3 allows.
+
+"Permission" means permission given in writing by BiggyStudios.
+
+
+2. What you may do
+
+2.1 Read and study. You may read the Game's source and study how it works, for your
+own learning.
+
+2.2 Build and play. You may build the Game from this repository and play it yourself,
+on your own devices.
+
+2.3 Show it. You may show yourself playing the Game in videos, streams and
+screenshots, and talk about it, including on channels that earn money in general, as
+long as you don't sell or charge for access to the Game itself.
+
+2.4 Fork on GitHub. If this repository is public, you may fork it on GitHub, as
+GitHub's terms allow, and make changes in your fork to suggest them back to the Game.
+A fork may not be released, shared or used as a game of its own.
+
+
+3. What you may not do
+
+Unless you have Permission:
+
+3.1 You may not make any Commercial use of the Game, or of any part of it, changed or
+unchanged.
+
+3.2 You may not share, upload, publish, distribute or release copies of the Game or
+any part of it, whether unchanged, changed, renamed, reskinned or rebranded, whether
+you charge for it or give it away for free. GitHub forks under 2.4 are the only
+exception.
+
+3.3 You may not use the Game's code, scenes, shaders, textures, models, sounds,
+story, characters, setting or writing in any other game, project, book, film or
+product, commercial or not.
+
+3.4 You may not make games, mods, remakes, sequels, fan versions or other works
+based on the Game, its story or its characters and release them.
+
+3.5 You may not use the Game, or any part of it, to train or improve machine learning
+or AI models.
+
+3.6 You may not remove or change this license or the copyright notice, or claim to
+have made the Game.
+
+
+4. Other uses
+
+For anything this license doesn't allow, ask BiggyStudios through the repository on
+GitHub. Permission is only given in writing, and only for what it says.
+
+
+5. Ending
+
+If you break this license, your rights under it end at once, and you must stop using
+the Game and delete any copies you made under it.
+
+
+6. No warranty
+
+The Game is provided "as is", without warranty of any kind, express or implied,
+including the warranties of merchantability, fitness for a particular purpose and
+noninfringement. In no event shall BiggyStudios be liable for any claim, damages or
+other liability arising from the Game or its use.
