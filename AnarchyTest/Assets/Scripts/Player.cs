@@ -55,7 +55,8 @@ namespace AnarchyTest
             if (_character == null) return;
 
             if (InputSystem.GetMouseButtonDown(MouseButton.Left)) InputSystem.CursorLocked = true;
-            if (InputSystem.GetKeyDown(Key.Escape)) InputSystem.CursorLocked = false;
+            // Not while reading: there Escape puts the page away.
+            if (CanMove && InputSystem.GetKeyDown(Key.Escape)) InputSystem.CursorLocked = false;
 
             if (CanMove && InputSystem.CursorLocked) Look();
             Walk(_character);
