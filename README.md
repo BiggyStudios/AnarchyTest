@@ -2,8 +2,8 @@
 
 A first-person story horror game made with the [Vertex engine](https://github.com/BiggyStudios/Vertex), in the
 style of the first PlayStation: low resolution, wobbling polygons, bending textures, crisp 64-pixel textures and
-dithered 15-bit colour, fading into darkness. Early days: so far there's the ward Rivali wakes in and the corridor
-outside it, in greybox.
+dithered 15-bit colour, fading into darkness. Everything is white, clean and high-tech, or was.
+Early days: so far there's the neural ward Rivali wakes in and the corridor outside it, in greybox.
 
 **Content warning:** graphic violence, gore and disturbing themes. For adults only.
 
