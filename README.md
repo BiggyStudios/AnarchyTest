@@ -3,7 +3,8 @@
 A first-person story horror game made with the [Vertex engine](https://github.com/BiggyStudios/Vertex), in the
 style of the first PlayStation: low resolution, wobbling polygons, bending textures, crisp 64-pixel textures and
 dithered 15-bit colour, fading into darkness. Everything is white, clean and high-tech, or was.
-Early days: so far there's the neural ward Rivali wakes in, the corridor outside it, and a monitoring room, in greybox.
+Early days: so far there's the neural ward Rivali wakes in and the floor around it (a corridor, monitoring, a staff room,
+intake, an operating theatre, a morgue and a lift lobby), in greybox.
 
 **Content warning:** graphic violence, gore and disturbing themes. For adults only.
 
@@ -50,7 +51,7 @@ doors, reading and the white figure), along with the engine's own tests.
 | `AnarchyTest/Assets/Scripts` | The game's C# components: the player, the flashlight, doors, screens, flickering lights, the white figure. |
 | `AnarchyTest/Assets/Shaders` | GLSL shaders: the PSX post effect. |
 | `AnarchyTest/Assets/Sounds` | Sounds, as WAV files: the facility's hum, doors, locks, screens, the figure. |
-| `AnarchyTest/Assets/Text` | What's written on the screens and tablets, a file each. It isn't published, so in a fresh clone they read as corrupted. |
+| `AnarchyTest/Assets/Text` | What's written on the screens, tablets and walls, a file each. It isn't published, so in a fresh clone screens read as corrupted and walls are blank. |
 | `AnarchyTest/Assets/Textures` | Textures, 64 pixels across. |
 | `AnarchyTest.Tests` | Tests that play the game headless. |
 
