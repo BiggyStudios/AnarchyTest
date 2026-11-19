@@ -40243,7 +40243,7 @@
           "type": "AnarchyTest.Player, AnarchyTest",
           "values": {
             "WalkSpeed": 1.8,
-            "RunSpeed": 3.4,
+            "RunSpeed": 5,
             "CrouchSpeed": 0.9,
             "Gravity": 18,
             "MouseSensitivity": 0.11,

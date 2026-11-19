@@ -15,7 +15,7 @@ namespace AnarchyTest
     {
         [Header("Moving")]
         public float WalkSpeed { get; set; } = 1.8f;
-        public float RunSpeed { get; set; } = 3.4f;
+        public float RunSpeed { get; set; } = 5f;
         public float CrouchSpeed { get; set; } = 0.9f;
         public float Gravity { get; set; } = 18f;
 
