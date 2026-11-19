@@ -9,13 +9,16 @@ namespace AnarchyTest
         /// <summary>The name of its text file in Assets/Text, without ".txt".</summary>
         public string Document { get; set; } = "";
 
+        /// <summary>Played as it wakes up.</summary>
+        public AudioClip? Sound { get; set; }
+
         public override string Prompt => "Read";
 
         public override void Use(Interactor by)
         {
             Reader? reader = by.GetComponent<Reader>();
             if (reader == null) return;
-            Sound.PlayAt(Sounds.Chirp, FocusPoint, 0.5f);
+            if (Sound != null) Vertex.Audio.Sound.PlayAt(Sound, FocusPoint, 0.5f);
             reader.Show(AnarchyTest.Document.Load(Document));
         }
     }

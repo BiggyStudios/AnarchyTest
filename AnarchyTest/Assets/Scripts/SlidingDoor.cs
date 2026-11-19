@@ -28,6 +28,10 @@ namespace AnarchyTest
         /// <summary>The little light by the door: red while it's locked, blue once it isn't. It needs a material of its own.</summary>
         public MeshRenderer? LockLight { get; set; }
 
+        [Header("Sounds")]
+        public AudioClip? OpenSound { get; set; }
+        public AudioClip? LockedSound { get; set; }
+
         public bool Open { get; private set; }
 
         public override string Prompt => Locked ? "Locked" : "Open";
@@ -50,12 +54,12 @@ namespace AnarchyTest
             if (Locked)
             {
                 _blink = 0.5f;
-                Sound.PlayAt(Sounds.Denied, FocusPoint, 0.7f);
+                if (LockedSound != null) Sound.PlayAt(LockedSound, FocusPoint, 0.7f);
                 return;
             }
 
             Open = true;
-            Sound.PlayAt(Sounds.DoorSlide, FocusPoint, 0.9f);
+            if (OpenSound != null) Sound.PlayAt(OpenSound, FocusPoint, 0.9f);
         }
 
         /// <summary>Lets it open: for a keycard, a switch, a scripted moment.</summary>

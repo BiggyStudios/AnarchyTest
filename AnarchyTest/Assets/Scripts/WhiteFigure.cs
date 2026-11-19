@@ -24,6 +24,9 @@ namespace AnarchyTest
         /// <summary>Where it can stand: empty objects round the facility.</summary>
         public List<GameObject> Spots { get; set; } = new();
 
+        /// <summary>Played when it's seen.</summary>
+        public AudioClip? Sting { get; set; }
+
         /// <summary>Whether it comes by itself yet. Off until it's first been seen where a <see cref="Sighting"/> puts it.</summary>
         public bool Roaming { get; set; }
 
@@ -146,7 +149,7 @@ namespace AnarchyTest
                 Seen = true;
                 Sightings++;
                 Fear = 1f;
-                Sound.Play(Sounds.Sting, 0.9f);
+                if (Sting != null) Sound.Play(Sting, 0.9f);
             }
 
             float distance = HorizontalDistance();

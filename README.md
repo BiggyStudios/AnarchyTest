@@ -49,6 +49,7 @@ doors, reading and the white figure), along with the engine's own tests.
 | `AnarchyTest/Assets/Scenes` | The scenes, made and changed in the editor. |
 | `AnarchyTest/Assets/Scripts` | The game's C# components: the player, the flashlight, doors, screens, flickering lights, the white figure. |
 | `AnarchyTest/Assets/Shaders` | GLSL shaders: the PSX post effect. |
+| `AnarchyTest/Assets/Sounds` | Sounds, as WAV files: the facility's hum, doors, locks, screens, the figure. |
 | `AnarchyTest/Assets/Text` | What's written on the screens and tablets, a file each. It isn't published, so in a fresh clone they read as corrupted. |
 | `AnarchyTest/Assets/Textures` | Textures, 64 pixels across. |
 | `AnarchyTest.Tests` | Tests that play the game headless. |

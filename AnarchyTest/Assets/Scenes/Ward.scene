@@ -3106,6 +3106,9 @@
           "type": "AnarchyTest.Terminal, AnarchyTest",
           "values": {
             "Document": "subject-0417",
+            "Sound": {
+              "sound": "file:Sounds/Terminal Chirp.wav"
+            },
             "Focus": [
               0,
               0,
@@ -20823,6 +20826,12 @@
               "object": 328,
               "component": 0
             },
+            "OpenSound": {
+              "sound": "file:Sounds/Door Slide.wav"
+            },
+            "LockedSound": {
+              "sound": "file:Sounds/Lock Denied.wav"
+            },
             "Focus": [
               0,
               1.2,
@@ -21480,6 +21489,12 @@
             "LockLight": {
               "object": 339,
               "component": 0
+            },
+            "OpenSound": {
+              "sound": "file:Sounds/Door Slide.wav"
+            },
+            "LockedSound": {
+              "sound": "file:Sounds/Lock Denied.wav"
             },
             "Focus": [
               0,
@@ -22139,6 +22154,12 @@
               "object": 350,
               "component": 0
             },
+            "OpenSound": {
+              "sound": "file:Sounds/Door Slide.wav"
+            },
+            "LockedSound": {
+              "sound": "file:Sounds/Lock Denied.wav"
+            },
             "Focus": [
               0,
               1.2,
@@ -22796,6 +22817,12 @@
             "LockLight": {
               "object": 361,
               "component": 0
+            },
+            "OpenSound": {
+              "sound": "file:Sounds/Door Slide.wav"
+            },
+            "LockedSound": {
+              "sound": "file:Sounds/Lock Denied.wav"
             },
             "Focus": [
               0,
@@ -24714,6 +24741,9 @@
           "type": "AnarchyTest.Terminal, AnarchyTest",
           "values": {
             "Document": "shift-handover",
+            "Sound": {
+              "sound": "file:Sounds/Terminal Chirp.wav"
+            },
             "Focus": [
               0,
               0,
@@ -30566,6 +30596,9 @@
           "type": "AnarchyTest.Terminal, AnarchyTest",
           "values": {
             "Document": "transfer-log",
+            "Sound": {
+              "sound": "file:Sounds/Terminal Chirp.wav"
+            },
             "Focus": [
               0,
               0,
@@ -30966,6 +30999,9 @@
           "type": "AnarchyTest.Terminal, AnarchyTest",
           "values": {
             "Document": "night-feed",
+            "Sound": {
+              "sound": "file:Sounds/Terminal Chirp.wav"
+            },
             "Focus": [
               0,
               0,
@@ -40546,6 +40582,9 @@
                 "object": 632
               }
             ],
+            "Sting": {
+              "sound": "file:Sounds/Figure Sting.wav"
+            },
             "Roaming": false,
             "MinWait": 40,
             "MaxWait": 100,
@@ -41977,9 +42016,26 @@
       ],
       "components": [
         {
-          "type": "AnarchyTest.Ambience, AnarchyTest",
+          "type": "Vertex.Audio.AudioSource, Vertex",
           "values": {
-            "Volume": 0.35
+            "Sound": {
+              "sound": "file:Sounds/Facility Hum.wav"
+            },
+            "AudioGraph": null,
+            "Volume": 0.35,
+            "Pitch": 1,
+            "PlayOnStart": true,
+            "Loop": true,
+            "InWorld": false,
+            "Pan": 0,
+            "FullVolumeDistance": 3,
+            "MaxDistance": 100,
+            "Rolloff": "Natural",
+            "Doppler": 0,
+            "ConeAngle": 360,
+            "OuterConeAngle": 360,
+            "OuterConeVolume": 0,
+            "Properties": []
           }
         }
       ]

@@ -67,10 +67,20 @@ namespace AnarchyTest.Tests
         }
 
         [Fact]
-        public void The_sounds_made_in_code_are_neither_silent_nor_clipped()
+        public void Doors_screens_the_figure_and_the_hum_all_have_sounds_that_are_neither_silent_nor_clipped()
         {
-            foreach (Vertex.Audio.AudioClip clip in new[] { Sounds.Hum, Sounds.DoorSlide, Sounds.Denied, Sounds.Chirp, Sounds.Sting })
+            StartWard();
+            var clips = new List<Vertex.Audio.AudioClip?>();
+            foreach (SlidingDoor door in Scene.Active.FindComponents<SlidingDoor>()) clips.AddRange([door.OpenSound, door.LockedSound]);
+            foreach (Terminal screen in Scene.Active.FindComponents<Terminal>()) clips.Add(screen.Sound);
+            clips.Add(GameObject.Find("White Figure")!.GetComponent<WhiteFigure>()!.Sting);
+            clips.Add(GameObject.Find("Ambience")!.GetComponent<Vertex.Audio.AudioSource>()!.Sound);
+
+            Assert.Equal(14, clips.Count);
+            foreach (Vertex.Audio.AudioClip? clip in clips)
             {
+                Assert.NotNull(clip);
+                Assert.StartsWith("Sounds", Path.GetRelativePath(Path.Combine(AppContext.BaseDirectory, "Assets"), clip!.Source!));
                 int loudest = clip.Samples.Max(s => Math.Abs((int)s));
                 Assert.InRange(loudest, short.MaxValue / 20, short.MaxValue - 1);
             }
